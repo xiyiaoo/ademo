@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiyiaoo.dao.RoleDao">
+
+    <resultMap id="roleMap" type="com.xiyiaoo.entity.Role">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="value" property="value"/>
+        <result column="ordinal" property="ordinal"/>
+        <result column="description" property="description"/>
+        <result column="creator" property="creator"/>
+        <result column="createTime" property="createTime"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modifyTime" property="modifyTime"/>
+    </resultMap>
+
+    <sql id="queryRoles">
+        select id,
+               value,
+               name,
+               description,
+               creator,
+               createTime,
+               modifier,
+               modifyTime
+          from t_sys_role
+    </sql>
+    <insert id="add">
+    insert into t_sys_role
+      (id, name, value, description, creator, createTime, available)
+    values
+      (#{id}, #{name}, #{value}, #{description, jdbcType=VARCHAR}, #{creator}, sysdate, #{available})
+    </insert>
+    <insert id="addResource2Role">
+        insert into t_sys_role_resource(roleId, resourceId)
+        <foreach collection="resourceIds" item="resourceId" open="(" close=")" separator="union all">
+            select #{roleId}, #{resourceId} from dual
+        </foreach>
+    </insert>
+    <update id="update">
+        update t_sys_role
+           set value       = #{value},
+               name        = #{name},
+               description = #{description, jdbcType=VARCHAR},
+               modifier    = #{modifier},
+               modifyTime  = sysdate
+         where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from t_sys_role where id = #{id}
+    </delete>
+    <delete id="removeResource4Role">
+        delete from t_sys_role_resource where roleId = #{id}
+    </delete>
+    <select id="getAll" resultMap="roleMap">
+        <include refid="queryRoles"/>
+        where available = '1'
+          and id > '0'
+    </select>
+    <select id="getRoles" resultMap="roleMap">
+        <include refid="queryRoles"/>
+        where available = '1'
+          and id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="getPermissions" resultType="java.lang.String">
+        select r.permission
+          from t_sys_resource r, t_sys_role_resource rr
+         where rr.roleId = r.id
+           and r.available = '1'
+           and rr.roleId in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <select id="get" resultMap="roleMap">
+        <include refid="queryRoles"/>
+        where available = '1'
+          and id = #{id}
+    </select>
+    <select id="getResourceIds" resultType="java.lang.String">
+        select rr.resourceId
+          from t_sys_role_resource rr
+        where rr.roleId in
+        <foreach collection="list" item="role" open="(" separator="," close=")">
+            #{role.id}
+        </foreach>
+    </select>
+
+</mapper>

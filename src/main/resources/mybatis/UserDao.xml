@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiyiaoo.dao.UserDao">
+
+    <resultMap id="uerMap" type="com.xiyiaoo.entity.User">
+        <id column="id" property="id"/>
+        <result column="organizationId" property="organizationId"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="salt" property="salt"/>
+        <result column="avatar" property="avatar"/>
+        <result column="locked" property="locked"/>
+        <result column="name" property="name"/>
+        <result column="gender" property="gender"/>
+        <result column="telephone" property="telephone"/>
+        <result column="birthday" property="birthday"/>
+        <result column="email" property="email"/>
+        <result column="address" property="address"/>
+        <result column="description" property="description"/>
+        <result column="creator" property="creator"/>
+        <result column="createTime" property="createTime"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modifyTime" property="modifyTime"/>
+    </resultMap>
+
+    <sql id="queryUsers">
+        select id,
+               organizationId,
+               username,
+               password,
+               salt,
+               avatar,
+               locked,
+               name,
+               gender,
+               telephone,
+               birthday,
+               email,
+               address,
+               description,
+               creator,
+               createTime,
+               modifier,
+               modifyTime
+          from t_sys_user
+    </sql>
+    <insert id="add">
+        insert into t_sys_user
+          (id,
+           organizationId,
+           username,
+           password,
+           salt,
+           locked,
+           avatar,
+           name,
+           gender,
+           telephone,
+           birthday,
+           email,
+           address,
+           description,
+           creator,
+           createTime,
+           available)
+        values
+          (#{id},
+           #{organizationId},
+           #{username},
+           #{password},
+           #{salt},
+           #{locked},
+           #{avatar, jdbcType=VARCHAR},
+           #{name, jdbcType=VARCHAR},
+           #{gender, jdbcType=VARCHAR},
+           #{telephone, jdbcType=VARCHAR},
+           #{birthday, jdbcType=TIMESTAMP},
+           #{email, jdbcType=VARCHAR},
+           #{address, jdbcType=VARCHAR},
+           #{description, jdbcType=VARCHAR},
+           #{creator},
+           sysdate,
+           #{available})
+    </insert>
+    <insert id="addRoleIds">
+      insert into t_sys_user_role(userId, roleId, ordinal)
+      <foreach collection="roles" item="role" separator="union all">
+          select #{userId}, #{role.id}, #{role.ordinal} from dual
+      </foreach>
+    </insert>
+    <update id="update">
+        update t_sys_user
+           set locked      = #{locked},
+               avatar      = #{avatar, jdbcType=VARCHAR},
+               name        = #{name, jdbcType=VARCHAR},
+               gender      = #{gender, jdbcType=VARCHAR},
+               telephone   = #{telephone, jdbcType=VARCHAR},
+               birthday    = #{birthday, jdbcType=TIMESTAMP},
+               email       = #{email, jdbcType=VARCHAR},
+               address     = #{address, jdbcType=VARCHAR},
+               description = #{description, jdbcType=VARCHAR},
+               modifier    = #{modifier},
+               modifyTime  = sysdate
+         where id = #{id}
+           and organizationId = #{organizationId}
+    </update>
+    <update id="modifyPassword">
+        update t_sys_user set password = #{password}, salt = #{salt} where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from t_sys_user where id = #{id} and organizationId = #{organizationId}
+    </delete>
+    <delete id="removeRoleIds">
+        delete from t_sys_user_role where userId = #{userId}
+    </delete>
+
+    <select id="getByUsername" resultMap="uerMap">
+        <include refid="queryUsers"/>
+        where available = '1'
+          and username = #{username}
+    </select>
+    <select id="getUsers" resultMap="uerMap">
+        <include refid="queryUsers"/>
+        where available = '1'
+    </select>
+    <select id="get" resultMap="uerMap">
+        <include refid="queryUsers"/>
+        where available = '1'
+          and id = #{id}
+          and organizationId = #{organizationId}
+    </select>
+    <select id="getRoleIds" resultMap="com.xiyiaoo.dao.RoleDao.roleMap">
+        select ur.roleId id, ur.ordinal
+          from t_sys_user_role ur
+         where ur.userId = #{id}
+    </select>
+</mapper>

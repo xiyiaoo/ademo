@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiyiaoo.dao.ResourceDao">
+
+    <resultMap id="resourceMap" type="com.xiyiaoo.entity.Resource">
+        <id column="id" property="id"/>
+        <result column="parentId" property="parentId"/>
+        <result column="parentIds" property="parentIds"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="url" property="url"/>
+        <result column="iconClass" property="iconClass"/>
+        <result column="permission" property="permission"/>
+        <result column="ordinal" property="ordinal"/>
+        <result column="type" property="type"/>
+        <result column="creator" property="creator"/>
+        <result column="createTime" property="createTime"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modifyTime" property="modifyTime"/>
+    </resultMap>
+    <sql id="queryResources">
+        select id,
+               parentId,
+               parentIds,
+               type,
+               name,
+               description,
+               permission,
+               url,
+               iconClass,
+               ordinal,
+               creator,
+               createTime,
+               modifier,
+               modifyTime
+          from t_sys_resource
+    </sql>
+    <insert id="add">
+        insert into t_sys_resource
+          (id,
+           parentId,
+           parentIds,
+           type,
+           name,
+           description,
+           permission,
+           url,
+           iconClass,
+           ordinal,
+           creator,
+           createTime,
+           available)
+        values
+          (#{id},
+           #{parentId, jdbcType=VARCHAR},
+           #{parentIds, jdbcType=VARCHAR},
+           #{type},
+           #{name},
+           #{description, jdbcType=VARCHAR},
+           #{permission},
+           #{url, jdbcType=VARCHAR},
+           #{iconClass, jdbcType=VARCHAR},
+           #{ordinal},
+           #{creator},
+           sysdate,
+           #{available})
+    </insert>
+    <update id="update">
+        update t_sys_resource
+           set parentId    = #{parentId, jdbcType=VARCHAR},
+               parentIds   = #{parentIds, jdbcType=VARCHAR},
+               type        = #{type},
+               name        = #{name},
+               description = #{description, jdbcType=VARCHAR},
+               permission  = #{permission},
+               url         = #{url, jdbcType=VARCHAR},
+               iconClass   = #{iconClass, jdbcType=VARCHAR},
+               ordinal     = #{ordinal},
+               modifier    = #{modifier},
+               modifyTime  = sysdate
+         where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from t_sys_resource where id = #{id}
+    </delete>
+    <select id="getAll" resultMap="resourceMap">
+        <include refid="queryResources"/>
+        where available = '1'
+    </select>
+    <select id="get" resultMap="resourceMap">
+        <include refid="queryResources"/>
+        where available = '1'
+          and id = #{id}
+    </select>
+    <select id="getResources" resultMap="resourceMap">
+        <include refid="queryResources"/>
+        where available = '1'
+          and id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+</mapper>

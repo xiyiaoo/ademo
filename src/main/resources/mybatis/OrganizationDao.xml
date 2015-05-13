@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiyiaoo.dao.OrganizationDao">
+
+    <resultMap id="organizationMap" type="com.xiyiaoo.entity.Organization">
+        <id column="id" property="id"/>
+        <result column="parentId" property="parentId"/>
+        <result column="parentIds" property="parentIds"/>
+        <result column="parentNames" property="parentNames"/>
+        <result column="ordinal" property="ordinal"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <result column="creator" property="creator"/>
+        <result column="createTime" property="createTime"/>
+        <result column="modifier" property="modifier"/>
+        <result column="modifyTime" property="modifyTime"/>
+    </resultMap>
+    <sql id="queryOrganizations">
+        select id,
+               parentId,
+               parentIds,
+               parentNames,
+               name,
+               description,
+               ordinal,
+               creator,
+               createTime,
+               modifier,
+               modifyTime
+          from t_sys_organization
+    </sql>
+    <insert id="add">
+        insert into t_sys_organization
+          (id,
+           parentId,
+           parentIds,
+           parentNames,
+           name,
+           description,
+           ordinal,
+           creator,
+           createTime,
+           available)
+        values
+          (#{id},
+           #{parentId, jdbcType=VARCHAR},
+           #{parentIds, jdbcType=VARCHAR},
+           #{parentNames, jdbcType=VARCHAR},
+           #{name},
+           #{description, jdbcType=VARCHAR},
+           #{ordinal},
+           #{creator},
+           sysdate,
+           #{available})
+    </insert>
+    <update id="update">
+        update t_sys_organization
+           set parentId    = #{parentId, jdbcType=VARCHAR},
+               parentIds   = #{parentIds, jdbcType=VARCHAR},
+               parentNames = #{parentNames, jdbcType=VARCHAR},
+               name        = #{name},
+               description = #{description, jdbcType=VARCHAR},
+               ordinal     = #{ordinal},
+               modifier    = #{modifier},
+               modifyTime  = sysdate,
+               available   = #{available}
+         where id = #{id}
+    </update>
+    <update id="updateForMove">
+        update t_sys_organization
+           set parentId    = #{parentId, jdbcType=VARCHAR},
+               parentIds   = #{parentIds, jdbcType=VARCHAR},
+               parentNames = #{parentNames, jdbcType=VARCHAR}
+         where id = #{id}
+    </update>
+    <delete id="delete">
+        delete from t_sys_organization where id = #{id}
+    </delete>
+    <select id="get" resultMap="organizationMap">
+        <include refid="queryOrganizations"/>
+        where id = #{id}
+    </select>
+    <select id="getOrganizations" resultMap="organizationMap">
+        <include refid="queryOrganizations"/>
+        where available = '1'
+    </select>
+    <select id="getChildren" resultMap="organizationMap">
+        select id, name, parentId, parentIds, parentNames, ordinal
+          from t_sys_organization
+         where available = '1'
+           and parentId = #{id}
+    </select>
+    <select id="getChildrenRecursively" resultMap="organizationMap">
+        select id, name, parentId, parentIds, parentNames, ordinal
+          from t_sys_organization
+         where available = '1'
+         start with parentId = #{id}
+        connect by prior id = parentId
+    </select>
+</mapper>
