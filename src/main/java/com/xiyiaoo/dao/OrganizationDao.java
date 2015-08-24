@@ -5,7 +5,6 @@ package com.xiyiaoo.dao;
 
 import com.xiyiaoo.entity.Organization;
 import com.xiyiaoo.entity.PageResult;
-import com.xiyiaoo.entity.Resource;
 
 import java.util.List;
 
@@ -46,20 +45,23 @@ public interface OrganizationDao {
     /**
      * 增加一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void add(Organization t);
+    int add(Organization t);
 
     /**
      * 删除一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void delete(Organization t);
+    int delete(Organization t);
 
     /**
      * 更新一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void update(Organization t);
+    int update(Organization t);
 
     /**
      * 获取一个实体

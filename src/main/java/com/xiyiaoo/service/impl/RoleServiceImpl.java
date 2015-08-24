@@ -9,8 +9,12 @@ import com.xiyiaoo.service.RoleService;
 import com.xiyiaoo.util.CollectionUtil;
 import com.xiyiaoo.util.StringUtil;
 import com.xiyiaoo.util.WebUtil;
+import com.xiyiaoo.validation.group.Create;
+import com.xiyiaoo.validation.group.Query;
+import com.xiyiaoo.validation.group.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Collections;
 import java.util.List;
@@ -79,27 +83,30 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void add(Role role) {
+    @Validated({Create.class})
+    public int add(Role role) {
         role.setId(StringUtil.uuid());
         role.setCreator(WebUtil.getCurrentUserId());
-        roleDao.add(role);
+        return roleDao.add(role);
     }
 
     @Override
-    public void delete(Role role) {
-        roleDao.delete(role);
+    @Validated({Query.class})
+    public int delete(Role role) {
         //级联清除授权的资源
         roleDao.removeResource4Role(role.getId());
+        return roleDao.delete(role);
     }
 
     @Override
-    public void update(Role role) {
+    @Validated({Update.class})
+    public int update(Role role) {
         role.setModifier(WebUtil.getCurrentUserId());
-        roleDao.update(role);
-
+        return roleDao.update(role);
     }
 
     @Override
+    @Validated({Query.class})
     public Role get(Role role) {
         return roleDao.get(role);
     }

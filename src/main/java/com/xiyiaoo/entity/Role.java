@@ -3,7 +3,12 @@
  */
 package com.xiyiaoo.entity;
 
-import java.util.Set;
+import com.xiyiaoo.validation.group.Create;
+import com.xiyiaoo.validation.group.Query;
+import com.xiyiaoo.validation.group.Update;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * User: xiyiaoo@gmail.com
@@ -14,10 +19,12 @@ public class Role extends BaseEntity {
     /**
      * 角色名
      */
+    @NotBlank(message = "{Role.name.null}", groups = {Create.class, Update.class})
     private String name;
     /**
      * 角色值，权限判断会用到，如admin
      */
+    @NotBlank(message = "{Role.value.null}", groups = {Create.class, Update.class})
     private String value;
     /**
      * 角色描述
@@ -29,6 +36,12 @@ public class Role extends BaseEntity {
      * 序号
      */
     private int ordinal;
+
+    @NotNull(message = "{default.id.null}",groups = {Update.class, Query.class})
+    @Override
+    public String getId() {
+        return super.getId();
+    }
 
     @Override
     public int hashCode() {

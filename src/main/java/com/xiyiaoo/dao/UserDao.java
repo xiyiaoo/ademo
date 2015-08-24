@@ -60,20 +60,23 @@ public interface UserDao {
     /**
      * 增加一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void add(User t);
+    int add(User t);
 
     /**
      * 删除一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
     int delete(User t);
 
     /**
      * 更新一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void update(User t);
+    int update(User t);
 
     /**
      * 获取一个实体

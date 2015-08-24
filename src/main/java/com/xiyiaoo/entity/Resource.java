@@ -4,6 +4,11 @@
 package com.xiyiaoo.entity;
 
 import com.xiyiaoo.constants.ResourceType;
+import com.xiyiaoo.validation.group.Create;
+import com.xiyiaoo.validation.group.Update;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * User: xiyiaoo@gmail.com
@@ -14,6 +19,7 @@ public class Resource extends BaseEntity {
     /**
      * 上级机构ID
      */
+    @NotBlank(message = "{Resource.parentId.null}", groups = {Create.class})
     private String parentId;
     /**
      * 所有上级id用/连接,如root/parent/
@@ -22,6 +28,7 @@ public class Resource extends BaseEntity {
     /**
      * 资源名称(如果是菜单则会是菜单名称)
      */
+    @NotBlank(message = "{Resource.name.null}", groups = {Create.class, Update.class})
     private String name;
     /**
      * 资源描述
@@ -30,6 +37,7 @@ public class Resource extends BaseEntity {
     /**
      * 权限标识
      */
+    @NotBlank(message = "Resource.permission.null", groups = {Create.class, Update.class})
     private String permission;
     /**
      * 序号
@@ -38,6 +46,7 @@ public class Resource extends BaseEntity {
     /**
      * 资源类型
      */
+    @NotNull(message = "{Resource.type.null}", groups = {Create.class})
     private ResourceType type;
     /***
      * 访问地址
@@ -47,6 +56,12 @@ public class Resource extends BaseEntity {
      * 图标的类名, 菜单类型的才需要,通过此class在页面上显示图标
      */
     private String iconClass;
+
+    @NotBlank(message = "{default.id.null}", groups = {Create.class, Update.class})
+    @Override
+    public String getId() {
+        return super.getId();
+    }
 
     public String getParentId() {
         return parentId;

@@ -27,6 +27,8 @@
               top: 50%;
               left: 50%;
               transform: translate(-50%, -50%);
+              -webkit-transform: translate(-50%, -50%);
+              -moz-transform: translate(-50%, -50%);
               min-width: 600px;
           }
           #login > .container > .ui {
@@ -40,7 +42,11 @@
           <a class="ui top black large attached label">请登录</a>
           <div class="ui two column middle aligned relaxed fitted stackable grid">
               <div class="column">
-                  <form class="ui form segment" method="post">
+                  <form class="ui ${hasError ? "error" : ""} form segment" method="post">
+                      <div class="ui error message">
+                          <div class="header">登录失败</div>
+                          <p>用户名或密码错误</p>
+                      </div>
                       <div class="field">
                           <label for="username">用户</label>
                           <div class="ui left icon input">
@@ -57,8 +63,8 @@
                       </div>
                       <div class="field inline">
                           <div class="ui toggle checkbox">
-                              <input id="remember.me" name="rememberMe" type="checkbox">
-                              <label for="remember.me">记住我</label>
+                              <input id="rememberMe" name="rememberMe" type="checkbox">
+                              <label for="rememberMe">记住我</label>
                           </div>
                       </div>
                       <button class="ui block blue fluid button" type="submit">

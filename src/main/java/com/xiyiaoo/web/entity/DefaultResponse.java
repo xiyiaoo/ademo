@@ -1,14 +1,14 @@
 /**
  * Copyright © Foresee Science & Technology Ltd. 
  */
-package com.xiyiaoo.entity;
+package com.xiyiaoo.web.entity;
 
 /**
  * User: xiyiaoo@gmail.com
  * Date: 15-5-12 下午4:12
  * 响应结果
  */
-public class DefaultResponse<T> {
+public class DefaultResponse implements Response {
     /**
      * 成功标记
      */
@@ -16,7 +16,7 @@ public class DefaultResponse<T> {
     /**
      * 响应数据
      */
-    private T data;
+    private Object data;
     /**
      * 响应消息
      */
@@ -29,6 +29,7 @@ public class DefaultResponse<T> {
         this.success = success;
     }
 
+    @Override
     public boolean isSuccess() {
         return success;
     }
@@ -38,15 +39,17 @@ public class DefaultResponse<T> {
         return this;
     }
 
-    public T getData() {
+    @Override
+    public Object getData() {
         return data;
     }
 
-    public DefaultResponse setData(T data) {
+    public DefaultResponse setData(Object data) {
         this.data = data;
         return this;
     }
 
+    @Override
     public String getMessage() {
         return message;
     }

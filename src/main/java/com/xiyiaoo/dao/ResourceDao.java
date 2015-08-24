@@ -30,20 +30,23 @@ public interface ResourceDao {
     /**
      * 增加一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void add(Resource t);
+    int add(Resource t);
 
     /**
      * 删除一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void delete(Resource t);
+    int delete(Resource t);
 
     /**
      * 更新一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void update(Resource t);
+    int update(Resource t);
 
     /**
      * 获取一个实体

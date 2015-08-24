@@ -52,20 +52,23 @@ public interface RoleDao {
     /**
      * 增加一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void add(Role t);
+    int add(Role t);
 
     /**
      * 删除一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void delete(Role t);
+    int delete(Role t);
 
     /**
      * 更新一个实体
      * @param t 实体信息
+     * @return 影响记录数
      */
-    void update(Role t);
+    int update(Role t);
 
     /**
      * 获取一个实体

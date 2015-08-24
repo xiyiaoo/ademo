@@ -93,6 +93,22 @@
         <aop:advisor advice-ref="transactionInterceptor" pointcut-ref="transactionPointcut"/>
     </aop:config>
 
+    <!-- bean 方法参数验证 -->
+    <bean class="org.springframework.validation.beanvalidation.MethodValidationPostProcessor"/>
+
+    <!-- 数据权限拦截 -->
+    <bean class="com.xiyiaoo.security.datafilter.interceptor.DataFilterProcessor">
+        <property name="interceptor">
+            <bean class="com.xiyiaoo.security.datafilter.interceptor.DataFilterInterceptor">
+                <property name="accessDeciderBeanName" value="dataFilterHandler"/>
+            </bean>
+        </property>
+    </bean>
+    <bean id="dataFilterHandler" class="com.xiyiaoo.security.datafilter.interceptor.DataFilterHandler"/>
+
+    <!-- spring工具类 -->
+    <bean class="com.xiyiaoo.util.SpringUtil"/>
+
     <!-- 导入其他配置 -->
     <import resource="spring-context-mybatis.xml"/>
     <import resource="spring-context-cache.xml"/>

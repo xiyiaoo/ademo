@@ -64,7 +64,7 @@ public class PagingInterceptor implements Interceptor {
         //获取statementHandler的mappedStatement属性
         MappedStatement mappedStatement = (MappedStatement)metaStatementHandler.getValue("delegate.mappedStatement");
         //获取statementHandler的boundSql属性
-        BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
+        BoundSql boundSql = statementHandler.getBoundSql();
         Object parameterObject = boundSql.getParameterObject();
         if (parameterObject instanceof PageResult<?>){
             if(logger.isDebugEnabled()){

@@ -73,4 +73,20 @@ public class TestUserService extends BaseTestCase {
         }
     }
 
+    @Test
+    public void testValid() throws Exception {
+        User user = new User();
+        String username = StringUtil.uuid().substring(0, 20);
+        user.setUsername(username);
+        user.setPassword("123");
+        user.setName("测试");
+        user.setOrganizationId("0");
+        user.setGender(Gender.MALE);
+        try {
+            userService.getRoleIds("");
+        } finally {
+            userService.delete(user);//删除
+        }
+
+    }
 }

@@ -34,7 +34,7 @@ create table t_sys_organization
   parentIds          varchar2(200),
   parentNames        varchar2(1000),
   name               varchar2(200),
-  description        varchar2(32),
+  description        varchar2(500),
   ordinal            number,
   creator            varchar2(32),
   createTime         TIMESTAMP,

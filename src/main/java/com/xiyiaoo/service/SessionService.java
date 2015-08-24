@@ -38,4 +38,5 @@ public interface SessionService {
      * @param username 用户名
      */
     void createUserSession(String username);
+
 }

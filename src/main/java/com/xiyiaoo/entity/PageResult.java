@@ -3,6 +3,8 @@
  */
 package com.xiyiaoo.entity;
 
+import org.springframework.util.Assert;
+
 import java.util.List;
 
 /**
@@ -44,6 +46,7 @@ public class PageResult<T> {
     }
 
     public void setPageIndex(int pageIndex) {
+        Assert.isTrue(pageIndex > 0);
         this.pageIndex = pageIndex;
     }
 
@@ -52,6 +55,7 @@ public class PageResult<T> {
     }
 
     public void setPageSize(int pageSize) {
+        Assert.isTrue(pageSize > 0);
         this.pageSize = pageSize;
     }
 
@@ -69,6 +73,7 @@ public class PageResult<T> {
 
     public void setTotalResults(int totalResults) {
         this.totalResults = totalResults;
+        this.totalPages = totalResults / pageSize + 1;
     }
 
     public List<T> getData() {

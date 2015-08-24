@@ -4,6 +4,9 @@
 package com.xiyiaoo.entity;
 
 import com.xiyiaoo.constants.Gender;
+import com.xiyiaoo.validation.group.Create;
+import com.xiyiaoo.validation.group.Query;
+import com.xiyiaoo.validation.group.Update;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -18,18 +21,18 @@ public class User extends BaseEntity {
     /**
      * 所属机构
      */
-    @NotNull(message = "{User.organizationId.null}")
+    @NotNull(message = "{User.organizationId.null}", groups = {Create.class, Update.class, Query.class})
     private String organizationId;
     /**
      * 用户名
      */
-    @NotNull(message = "{User.username.null}")
-    @Pattern(regexp = "\\w{4,20}", message = "{User.username.pattern}")
+    @NotNull(message = "{User.username.null}", groups = {Create.class})
+    @Pattern(regexp = "\\w{4,20}", message = "{User.username.pattern}", groups = {Create.class})
     private String username;
     /**
      * 密码
      */
-    @NotNull(message = "{User.password.null}")
+    @NotNull(message = "{User.password.null}", groups = {Create.class})
     private String password;
     /**
      * 加密用的演
@@ -71,6 +74,12 @@ public class User extends BaseEntity {
      * 说明
      */
     private String description;
+
+    @NotNull(message = "{default.id.null}",groups = {Update.class, Query.class})
+    @Override
+    public String getId() {
+        return super.getId();
+    }
 
     public String getOrganizationId() {
         return organizationId;

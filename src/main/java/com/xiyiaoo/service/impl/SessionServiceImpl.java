@@ -62,4 +62,5 @@ public class SessionServiceImpl implements SessionService {
         }
         return permissions;
     }
+
 }

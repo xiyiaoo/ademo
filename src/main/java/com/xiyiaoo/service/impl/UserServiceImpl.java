@@ -3,22 +3,28 @@
  */
 package com.xiyiaoo.service.impl;
 
+import com.xiyiaoo.constants.Constants;
 import com.xiyiaoo.dao.UserDao;
 import com.xiyiaoo.entity.PageResult;
 import com.xiyiaoo.entity.Role;
 import com.xiyiaoo.entity.User;
 import com.xiyiaoo.exception.AccessDeniedException;
-import com.xiyiaoo.service.RoleService;
+import com.xiyiaoo.security.datafilter.annotation.AccessFilter;
+import com.xiyiaoo.service.UserService;
 import com.xiyiaoo.util.CollectionUtil;
 import com.xiyiaoo.util.StringUtil;
 import com.xiyiaoo.util.UserPasswordEncryptor;
-import com.xiyiaoo.service.UserService;
 import com.xiyiaoo.util.WebUtil;
+import com.xiyiaoo.validation.group.Create;
+import com.xiyiaoo.validation.group.Query;
+import com.xiyiaoo.validation.group.Update;
+import com.xiyiaoo.validation.validator.ValidChangePassword;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.Collections;
-import java.util.HashSet;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 
@@ -46,20 +52,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(String oldPassword, String newPassword) {
-        if(!oldPassword.equals(newPassword)){
-            User currentUser = WebUtil.getCurrentUser();
-            if (encryptor.match(currentUser, oldPassword)){//匹配旧密码是否正确
-                User user = new User();
-                user.setId(currentUser.getId());
-                user.setPassword(newPassword);
-                encryptor.encrypt(user);
-                userDao.modifyPassword(user);
-                //盐变了，需要同步更新回session
-                currentUser.setSalt(user.getSalt());
-                currentUser.setPassword(user.getPassword());
-            } else {
-                throw new AccessDeniedException("旧密码错误");
-            }
+        User currentUser = WebUtil.getCurrentUser();
+        if (encryptor.match(currentUser, oldPassword)){//匹配旧密码是否正确
+            User user = new User();
+            user.setId(currentUser.getId());
+            user.setPassword(newPassword);
+            encryptor.encrypt(user);
+            userDao.modifyPassword(user);
+            //盐变了，需要同步更新回session
+            currentUser.setSalt(user.getSalt());
+            currentUser.setPassword(user.getPassword());
+        } else {
+            throw new AccessDeniedException("旧密码错误");
         }
     }
 
@@ -77,6 +81,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @AccessFilter
+    @Validated({Query.class})
     public void addRoleIds(User user, Set<Role> roles) {
         if (CollectionUtil.isNotEmpty(roles)){
             String userId = user.getId();
@@ -89,10 +95,11 @@ public class UserServiceImpl implements UserService {
             //更新主表的修改人
             update(user);
         }
-
     }
 
     @Override
+    @AccessFilter
+    @Validated({Query.class})
     public void updateRoleIds(User user, Set<Role> roles) {
         String userId = user.getId();
         user = get(user);
@@ -109,8 +116,9 @@ public class UserServiceImpl implements UserService {
         update(user);
     }
 
+    @AccessFilter(ignoreTarget = true)
     @Override
-    public PageResult<User> getUsers(int pageIndex, int pageSize, User user) {
+    public PageResult<User> getUsers(User user, int pageIndex, int pageSize) {
         PageResult<User> pageResult = new PageResult<>(pageIndex, pageSize);
         pageResult.setData(userDao.getUsers(pageResult));
         return pageResult;
@@ -121,11 +129,13 @@ public class UserServiceImpl implements UserService {
      * @param user 用户信息
      */
     @Override
-    public void add(User user) {
+    @Validated({Create.class})
+    @AccessFilter
+    public int add(User user) {
         user.setId(StringUtil.uuid());
         user.setCreator(WebUtil.getCurrentUserId());
         encryptor.encrypt(user);
-        userDao.add(user);
+        return userDao.add(user);
     }
 
     /**
@@ -133,11 +143,18 @@ public class UserServiceImpl implements UserService {
      * @param user 用户信息
      */
     @Override
-    public void delete(User user) {
-        if(userDao.delete(user) > 0){
+    @Validated({Query.class})
+    @AccessFilter
+    public int delete(User user) {
+        if (Constants.ROOT_ID.equals(user.getId())){
+            return 0;
+        }
+        int delNum = userDao.delete(user);
+        if(delNum > 0){
             //级联删除授权的角色
             userDao.removeRoleIds(user.getId());
         }
+        return delNum;
     }
 
     /**
@@ -145,9 +162,15 @@ public class UserServiceImpl implements UserService {
      * @param user 用户信息
      */
     @Override
-    public void update(User user) {
+    @Validated({Update.class})
+    @AccessFilter
+    public int update(User user) {
+        if (Constants.ROOT_ID.equals(user.getId())){
+            return 0;
+        }
+        //TODO 修改机构时的权限过滤
         user.setModifier(WebUtil.getCurrentUserId());
-        userDao.update(user);
+        return userDao.update(user);
     }
 
     /**
@@ -156,6 +179,8 @@ public class UserServiceImpl implements UserService {
      * @param user 条件(机构+用户id)
      */
     @Override
+    @Validated({Query.class})
+    @AccessFilter
     public User get(User user) {
         return userDao.get(user);
     }

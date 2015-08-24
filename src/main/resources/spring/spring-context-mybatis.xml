@@ -10,8 +10,14 @@
         <property name="mapperLocations" value="classpath:mybatis/*Dao.xml"/>
         <property name="plugins">
             <array>
-                <!-- 分页拦截器 -->
-                <bean class="com.xiyiaoo.mybatis.interceptor.PagingInterceptor"/>
+                <bean class="com.xiyiaoo.mybatis.interceptor.QueryInterceptor">
+                    <property name="handlers">
+                        <array>
+                            <ref bean="dataFilterHandler"/>
+                            <bean class="com.xiyiaoo.mybatis.interceptor.PagingQueryHandler"/>
+                        </array>
+                    </property>
+                </bean>
             </array>
         </property>
     </bean>

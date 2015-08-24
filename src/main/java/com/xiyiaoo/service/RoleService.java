@@ -4,6 +4,8 @@
 package com.xiyiaoo.service;
 
 import com.xiyiaoo.entity.Role;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.List;
 import java.util.Set;
@@ -39,12 +41,12 @@ public interface RoleService extends BaseService<Role> {
      * @param roleId 角色id
      * @param resourceIds 资源id
      */
-    void addResourceIds(String roleId, Set<String> resourceIds);
+    void addResourceIds(@NotBlank(message = "{default.id.null}")String roleId, Set<String> resourceIds);
 
     /**
      * 更新角色授权的资源
      * @param roleId 角色id
      * @param resourceIds 资源id
      */
-    void updateResourceIds(String roleId, Set<String> resourceIds);
+    void updateResourceIds(@NotBlank(message = "{default.id.null}")String roleId, Set<String> resourceIds);
 }

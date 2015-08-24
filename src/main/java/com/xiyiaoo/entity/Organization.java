@@ -3,6 +3,10 @@
  */
 package com.xiyiaoo.entity;
 
+import com.xiyiaoo.validation.group.Create;
+import com.xiyiaoo.validation.group.Update;
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * User: xiyiaoo@gmail.com
  * Date: 15-4-24 下午8:53
@@ -12,6 +16,7 @@ public class Organization extends BaseEntity {
     /**
      * 上级机构ID
      */
+    @NotBlank(message = "{Organization.parentId.null}", groups = {Create.class, Update.class})
     private String parentId;
     /**
      * 所有上级id用/连接,如root/parent/
@@ -28,11 +33,34 @@ public class Organization extends BaseEntity {
     /**
      * 机构名
      */
+    @NotBlank(message = "{Organization.name.null}", groups = {Create.class, Update.class})
     private String name;
     /**
      * 机构描述
      */
     private String description;
+
+    @NotBlank(message = "{default.id.null}", groups = {Create.class, Update.class})
+    @Override
+    public String getId() {
+        return super.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getId() == null ? super.hashCode() : this.getId().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Organization){
+            Organization organization = (Organization) obj;
+            if(this.getId() != null){
+                return this.getId().equals(organization.getId());
+            }
+        }
+        return false;
+    }
 
     public String getParentId() {
         return parentId;

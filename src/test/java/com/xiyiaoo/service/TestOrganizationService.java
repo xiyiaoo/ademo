@@ -33,7 +33,7 @@ public class TestOrganizationService extends BaseTestCase {
             //测试增加
             organizationService.add(organization);
             Assert.assertNotNull(organizationService.get(organization));
-            Assert.assertFalse(organizationService.getOrganizations(1, 10, organization).getData().isEmpty());
+            Assert.assertFalse(organizationService.getOrganizations(organization, 1, 10).getData().isEmpty());
             organization.setDescription("测试");
             //测试修改
             organizationService.update(organization);
